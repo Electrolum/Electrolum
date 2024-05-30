@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electrolum - Registrarse</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Estilos generales */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1E2A38; /* Fondo azul oscuro */
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header img {
+      max-width: 100px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      color: #FFF;
+      margin: 0;
+    }
+
+    main {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    h2 {
+      color: #333;
+      margin-top: 0;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container input {
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .button {
+      background-color: #FFA500; /* Botón de color naranja */
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #FF8C00;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 10px;
+    }
+
+    .link-celeste {
+      color: #00BFFF;
+      text-decoration: none;
+      margin-top: 10px;
+      display: block;
+    }
+
+    .link-celeste:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      main {
+        padding: 15px;
+      }
+
+      .button {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="Logo.png" alt="Logo Electrolum">
+    <h1>Electrolum</h1>
+  </header>
+  <main>
+    <h2>Registrarse</h2>
+    <form id="registerForm" class="container">
+      <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+      <input type="text" id="apellido" name="apellido" placeholder="Apellido" required>
+      <input type="text" id="cedula" name="cedula" placeholder="Cédula" required>
+      <button type="submit" class="button">Registrarse</button>
+    </form>
+    <p id="errorMessage" class="error-message"></p>
+    <a href="login.html" class="link-celeste">¿Ya tienes cuenta? Inicia sesión aquí</a>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-d65F0ARx2g5n67yGw2e9NYByxnyJ4gU",
+      authDomain: "electrolum-e1f74.firebaseapp.com",
+      projectId: "electrolum-e1f74",
+      storageBucket: "electrolum-e1f74.appspot.com",
+      messagingSenderId: "193218771258",
+      appId: "1:193218771258:web:1221cd686ceb5744f0f803",
+      measurementId: "G-XMK3GKB4RS"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Manejar el formulario de registro
+    const registerForm = document.getElementById('registerForm');
+    const errorMessage = document.getElementById('errorMessage');
+
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMessage.textContent = '';
+
+      const nombre = registerForm.nombre.value;
+      const apellido = registerForm.apellido.value;
+      const cedula = registerForm.cedula.value;
+
+      try {
+        // Verificar si el usuario ya existe en Firebase
+        const userDoc = doc(db, 'Tabla 1', cedula);
+        const userSnap = await getDoc(userDoc);
+
+        if (userSnap.exists()) {
+          errorMessage.textContent = 'El usuario ya está registrado';
+        } else {
+          // Crear un nuevo documento de usuario
+          await setDoc(userDoc, {
+            nombre: nombre,
+            apellido: apellido,
+            cedula: cedula,
+            puntos: 450 // Puntos iniciales al registrarse
+          });
+
+          // Guardar la cédula en el localStorage
+          localStorage.setItem('currentUser', cedula);
+
+          // Redireccionar a la página principal
+          window.location.href = 'main.html';
+        }
+      } catch (error) {
+        console.error('Error al registrar el usuario:', error);
+        errorMessage.textContent = 'Ocurrió un error al registrar el usuario. Por favor, intenta nuevamente.';
+      }
+    });
+  </script>
+</body>
+</html>

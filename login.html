@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electrolum - Iniciar Sesión</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Estilos generales */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1E2A38; /* Fondo azul oscuro */
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header img {
+      max-width: 100px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      color: #FFF;
+      margin: 0;
+    }
+
+    main {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      color: #333;
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .container {
+      margin-bottom: 20px;
+    }
+
+    .container input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #FFA500; /* Botón de color naranja */
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #FF8C00;
+    }
+
+    .link-celeste {
+      color: #FFA500; /* Link de color naranja */
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .link-celeste:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      color: red;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      main {
+        padding: 15px;
+      }
+
+      button {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="Logo.png" alt="Logo Electrolum">
+    <h1>Electrolum</h1>
+  </header>
+  <main>
+    <h2>Iniciar Sesión</h2>
+    <form id="loginForm" class="container">
+      <input type="text" id="cedula" name="cedula" placeholder="Cédula" required>
+      <button type="submit" class="button">Iniciar Sesión</button>
+    </form>
+    <p id="errorMessage" class="error-message"></p>
+    <a href="register.html" class="link-celeste">¿No tienes cuenta? Regístrate aquí</a>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-d65F0ARx2g5n67yGw2e9NYByxnyJ4gU",
+      authDomain: "electrolum-e1f74.firebaseapp.com",
+      projectId: "electrolum-e1f74",
+      storageBucket: "electrolum-e1f74.appspot.com",
+      messagingSenderId: "193218771258",
+      appId: "1:193218771258:web:1221cd686ceb5744f0f803",
+      measurementId: "G-XMK3GKB4RS"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Manejar el formulario de inicio de sesión
+    const loginForm = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('errorMessage');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMessage.textContent = '';
+
+      const cedula = loginForm.cedula.value;
+
+      try {
+        // Verificar si el usuario existe en Firebase
+        const userDoc = doc(db, 'Tabla 1', cedula);
+        const userSnap = await getDoc(userDoc);
+
+        if (userSnap.exists()) {
+          // Guardar la cédula en el localStorage
+          localStorage.setItem('currentUser', cedula);
+          
+          // Redireccionar a la página principal
+          window.location.href = 'main.html';
+        } else {
+          errorMessage.textContent = 'Usuario no encontrado';
+        }
+      } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        errorMessage.textContent = 'Ocurrió un error al iniciar sesión. Por favor, intenta nuevamente.';
+      }
+    });
+  </script>
+</body>
+</html>
