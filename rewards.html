@@ -116,34 +116,21 @@
         // Importar las funciones necesarias de los SDKs de Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { onAuthStateChanged, getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         // Configuración de tu aplicación web Firebase
         const firebaseConfig = {
-            apiKey: "tu-api-key",
-            authDomain: "tu-auth-domain",
-            projectId: "tu-project-id",
-            storageBucket: "tu-storage-bucket",
-            messagingSenderId: "tu-sender-id",
-            appId: "tu-app-id",
-            measurementId: "tu-measurement-id"
+            apiKey: "AIzaSyACQ1lL1kdhyUMSHPz101lbSpa3b9RVQJA",
+            authDomain: "electrolum-e1f74.firebaseapp.com",
+            projectId: "electrolum-e1f74",
+            storageBucket: "electrolum-e1f74.appspot.com",
+            messagingSenderId: "193218771258",
+            appId: "1:193218771258:web:1221cd686ceb5744f0f803",
+            measurementId: "G-XMK3GKB4RS"
         };
 
         // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth();
-
-        // Verificar el estado de autenticación
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Si el usuario está autenticado, mostrar las recompensas
-                showRewards().catch(err => console.error('Error al cargar recompensas: ', err));
-            } else {
-                // Si no está autenticado, redirigir a la página de inicio de sesión
-                window.location.href = 'login.html';
-            }
-        });
 
         // Mostrar recompensas
         async function showRewards() {
@@ -183,6 +170,11 @@
                 rewardsContainer.appendChild(rewardItem);
             });
         }
+
+        // Mostrar recompensas al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            showRewards().catch(err => console.error('Error al cargar recompensas: ', err));
+        });
 
         // Volver a Perfil
         document.getElementById('back-to-profile').addEventListener('click', () => {
