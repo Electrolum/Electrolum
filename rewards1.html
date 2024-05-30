@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectroRecompensas</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #343a40; /* Fondo azul oscuro */
+            color: #fff; /* Texto blanco */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #f0ad4e; /* Color naranja */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #logo {
+            max-width: 200px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .rewards-container {
+            background-color: #343a40; /* Fondo azul oscuro */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 800px;
+            box-sizing: border-box;
+        }
+
+        .reward-item {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .reward-item img {
+            width: 100px;
+            height: auto;
+            border-radius: 4px;
+            margin-right: 20px;
+        }
+
+        .reward-item-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .reward-item h3 {
+            color: #007BFF;
+            margin: 5px 0;
+        }
+
+        .reward-item p {
+            color: #333;
+            margin: 5px 0;
+        }
+
+        #back-to-profile {
+            margin-top: 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #back-to-profile:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .rewards-container {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .reward-item img {
+                width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <img src="logo.png" alt="Logo Electrolum" id="logo">
+    <h1>ElectroRecompensas</h1>
+    <div class="rewards-container" id="rewards-container"></div>
+    <button id="back-to-profile">Volver a Perfil</button>
+
+    <script type="module">
+        // Importar las funciones necesarias de los SDKs de Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Configuración de tu aplicación web Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyACQ1lL1kdhyUMSHPz101lbSpa3b9RVQJA",
+            authDomain: "electrolum-e1f74.firebaseapp.com",
+            projectId: "electrolum-e1f74",
+            storageBucket: "electrolum-e1f74.appspot.com",
+            messagingSenderId: "193218771258",
+            appId: "1:193218771258:web:1221cd686ceb5744f0f803",
+            measurementId: "G-XMK3GKB4RS"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Mostrar recompensas
+        async function showRewards() {
+            const rewardsContainer = document.getElementById('rewards-container');
+            rewardsContainer.innerHTML = ''; // Limpiar contenido previo
+
+            const rewardsRef = collection(db, 'Rewards');
+            const querySnapshot = await getDocs(rewardsRef);
+
+            querySnapshot.forEach((doc) => {
+                const reward = doc.data();
+
+                // Crear elemento de recompensa
+                const rewardItem = document.createElement('div');
+                rewardItem.className = 'reward-item';
+
+                // Crear imagen de recompensa
+                const rewardImage = document.createElement('img');
+                rewardImage.src = reward.imageUrl;
+                rewardImage.alt = reward.name;
+
+                // Crear detalles de recompensa
+                const rewardDetails = document.createElement('div');
+                rewardDetails.className = 'reward-item-details';
+                const rewardName = document.createElement('h3');
+                rewardName.textContent = reward.name;
+                const rewardPoints = document.createElement('p');
+                rewardPoints.textContent = `Puntos requeridos: ${reward.points}`;
+
+                // Agregar imagen y detalles a la tarjeta de recompensa
+                rewardDetails.appendChild(rewardName);
+                rewardDetails.appendChild(rewardPoints);
+                rewardItem.appendChild(rewardImage);
+                rewardItem.appendChild(rewardDetails);
+
+                // Agregar tarjeta de recompensa al contenedor
+                rewardsContainer.appendChild(rewardItem);
+            });
+        }
+
+        // Mostrar recompensas al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            showRewards().catch(err => console.error('Error al cargar recompensas: ', err));
+        });
+
+        // Volver a Perfil
+        document.getElementById('back-to-profile').addEventListener('click', () => {
+            window.location.href = 'main.html';
+        });
+    </script>
+</body>
+</html>
