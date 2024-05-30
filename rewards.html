@@ -25,12 +25,6 @@
             margin-bottom: 20px;
         }
 
-        #logo {
-            max-width: 200px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
         .rewards-container {
             background-color: #343a40; /* Fondo azul oscuro */
             padding: 20px;
@@ -75,21 +69,6 @@
             margin: 5px 0;
         }
 
-        #back-to-profile {
-            margin-top: 20px;
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #back-to-profile:hover {
-            background-color: #0056b3;
-        }
-
         @media (max-width: 600px) {
             body {
                 padding: 10px;
@@ -107,10 +86,8 @@
     </style>
 </head>
 <body>
-    <img src="logo.png" alt="Logo Electrolum" id="logo">
     <h1>ElectroRecompensas</h1>
     <div class="rewards-container" id="rewards-container"></div>
-    <button id="back-to-profile">Volver a Perfil</button>
 
     <script type="module">
         // Importar las funciones necesarias de los SDKs de Firebase
@@ -174,11 +151,6 @@
         // Mostrar recompensas al cargar la página
         document.addEventListener('DOMContentLoaded', () => {
             showRewards().catch(err => console.error('Error al cargar recompensas: ', err));
-        });
-
-        // Volver a Perfil
-        document.getElementById('back-to-profile').addEventListener('click', () => {
-            window.location.href = 'main.html';
         });
     </script>
 </body>
