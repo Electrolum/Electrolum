@@ -4,29 +4,105 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Electrolum - Catálogo</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
     /* Estilos generales */
     body {
       font-family: Arial, sans-serif;
       background-color: #1E2A38; /* Fondo azul oscuro */
       margin: 0;
-      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header img {
+      max-width: 100px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      color: #FFF;
+      margin: 0;
     }
 
     main {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
     }
 
-    iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: calc(100% - 60px); /* Ajusta el alto del iframe */
+    h2 {
+      color: #333;
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .container {
+      margin-bottom: 20px;
+    }
+
+    .container p {
+      color: #666;
+      margin: 10px 0;
+    }
+
+    .container span {
+      font-weight: bold;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    button {
+      background-color: #FFA500; /* Botón de color naranja */
+      color: white;
+      padding: 12px;
       border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      width: calc(50% - 10px);
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #FF8C00;
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      main {
+        padding: 15px;
+      }
+
+      button {
+        padding: 10px;
+      }
     }
 
     /* Estilos para el menú inferior */
@@ -41,7 +117,6 @@
       position: fixed;
       bottom: 0;
       left: 0;
-      z-index: 1000; /* Asegura que el menú siempre esté arriba */
     }
 
     .bottom-menu a {
@@ -50,7 +125,6 @@
       font-weight: bold;
       text-align: center;
       flex-grow: 1;
-      padding: 10px 0;
     }
 
     .bottom-menu a:hover {
@@ -65,30 +139,36 @@
   </style>
 </head>
 <body>
+  <header>
+    <img src="Logo.png" alt="Logo Electrolum">
+    <h1>Electrolum</h1>
+  </header>
   <main>
-    <iframe src="https://www.canva.com/design/DAGFUluIaZo/XWGtNXApqnRbR7flr77Y_Q/view?utm_content=DAGFUluIaZo&utm_campaign=designshare&utm_medium=link&utm_source=editor" frameborder="0"></iframe>
+    <h2>Catálogo de Lámparas</h2>
+    <p>Visita nuestro catálogo de lámparas en Simplebooklet:</p>
+    <a href="https://simplebooklet.com/catalogolmparas#page=1" target="_blank" rel="noopener noreferrer">Ver Catálogo de Lámparas</a>
   </main>
 
   <!-- Menú inferior -->
   <div class="bottom-menu">
-    <a href="main.html">
-      <img src="icons/home-icon.png" alt="Inicio">
+    <a href="index.html">
+      <img src="home-icon.png" alt="Inicio">
       Inicio
     </a>
-    <a href="inicio.html">
-      <img src="icons/partner-icon.png" alt="Socio">
+    <a href="main.html">
+      <img src="partner-icon.png" alt="Socio">
       Socio
     </a>
     <a href="perfil.html">
-      <img src="icons/profile-icon.png" alt="Perfil">
+      <img src="profile-icon.png" alt="Perfil">
       Perfil
     </a>
     <a href="catalogo.html">
-      <img src="icons/catalog-icon.png" alt="Catálogo">
+      <img src="catalog-icon.png" alt="Catálogo">
       Catálogo
     </a>
     <a href="buscar-trabajadores.html">
-      <img src="icons/search-icon.png" alt="Electricistas">
+      <img src="search-icon.png" alt="Electricistas">
       Workers
     </a>
   </div>
