@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electrolum - Main</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Estilos generales */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1E2A38; /* Fondo azul oscuro */
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header img {
+      max-width: 100px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      color: #FFF;
+      margin: 0;
+    }
+
+    main {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      color: #333;
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .container {
+      margin-bottom: 20px;
+    }
+
+    .container p {
+      color: #666;
+      margin: 10px 0;
+    }
+
+    .container span {
+      font-weight: bold;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    button {
+      background-color: #FFA500; /* Botón de color naranja */
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      width: calc(50% - 10px);
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #FF8C00;
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      main {
+        padding: 15px;
+      }
+
+      button {
+        padding: 10px;
+      }
+    }
+
+    /* Estilos para el menú inferior */
+    .bottom-menu {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 100%;
+      background-color: #fff;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+      padding: 10px 0;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+    }
+
+    .bottom-menu a {
+      color: #1E2A38;
+      text-decoration: none;
+      font-weight: bold;
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .bottom-menu a:hover {
+      color: #FFA500;
+    }
+
+    .bottom-menu a img {
+      max-width: 25px;
+      display: block;
+      margin: 0 auto 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="icons/Logo.png" alt="Logo Electrolum">
+    <h1>Electrolum</h1>
+  </header>
+  <main>
+    <h2>Panel del Cliente</h2>
+    <div id="client-info" class="container">
+      <p>Nombre: <span id="clientNombre"></span></p>
+      <p>Apellido: <span id="clientApellido"></span></p>
+      <p>Cédula: <span id="clientCedula"></span></p>
+      <p>Puntos: <span id="clientPuntos"></span></p>
+      <canvas id="clientQR"></canvas>
+    </div>
+    <div class="button-container">
+      <button class="rewards button" onclick="location.href='rewards.html';">Ver Recompensas</button>
+      <button class="logout button" onclick="logout()">Cerrar Sesión</button>
+    </div>
+  </main>
+
+  <!-- Menú inferior -->
+  <div class="bottom-menu">
+    <a href="main.html">
+      <img src="icons/home-icon.png" alt="Inicio">
+      Inicio
+    </a>
+    <a href="inicio.html">
+      <img src="icons/partner-icon.png" alt="Socio">
+      Socio
+    </a>
+    <a href="perfil.html">
+      <img src="icons/profile-icon.png" alt="Perfil">
+      Perfil
+    </a>
+    <a href="catalogo.html">
+      <img src="icons/catalog-icon.png" alt="Catálogo">
+      Catálogo
+    </a>
+    <a href="buscar-trabajadores.html">
+      <img src="icons/search-icon.png" alt="Electricistas">
+      Workers
+    </a>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-d65F0ARx2g5n67yGw2e9NYByxnyJ4gU",
+      authDomain: "electrolum-e1f74.firebaseapp.com",
+      projectId: "electrolum-e1f74",
+      storageBucket: "electrolum-e1f74.appspot.com",
+      messagingSenderId: "193218771258",
+      appId: "1:193218771258:web:1221cd686ceb5744f0f803",
+      measurementId: "G-XMK3GKB4RS"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Obtener la cédula del usuario actual almacenada en localStorage
+    const currentUserCedula = localStorage.getItem('currentUser');
+
+    // Función para cargar los datos del usuario
+    async function loadUserData() {
+      // Verificar si el usuario ha iniciado sesión
+      if (!currentUserCedula) {
+        alert('No has iniciado sesión');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        // Obtener los datos del usuario desde Firestore
+        const userDoc = doc(db, 'Tabla 1', currentUserCedula);
+        const userSnap = await getDoc(userDoc);
+
+        // Verificar si el usuario existe
+        if (userSnap.exists()) {
+          const user = userSnap.data();
+          document.getElementById('clientNombre').textContent = user.nombre || '';
+          document.getElementById('clientApellido').textContent = user.apellido || '';
+          document.getElementById('clientCedula').textContent = user.cedula || '';
+          document.getElementById('clientPuntos').textContent = user.puntos || '';
+
+          // Generar QR Code
+          generateQR(user.cedula);
+        } else {
+          // Redireccionar si no se encuentra el usuario
+          alert('No se encontró el usuario');
+          window.location.href = 'login.html';
+        }
+      } catch (error) {
+        console.error('Error al cargar los datos del usuario:', error);
+        alert('Ocurrió un error al cargar los datos del usuario');
+      }
+    }
+
+    // Función para generar el código QR
+    function generateQR(cedula) {
+      const canvas = document.getElementById('clientQR');
+      const ctx = canvas.getContext('2d');
+
+      // Configurar la biblioteca QRCode Generator
+      const typeNumber = 10; // Ajusta el tamaño del código QR (1-40)
+      const errorCorrectionLevel = 'L'; // Ajusta el nivel de corrección de errores ('L', 'M', 'Q', 'H')
+      const qr = qrcode(typeNumber, errorCorrectionLevel); // Crea el código QR
+
+      qr.addData(cedula); // Agrega los datos del código QR
+      qr.make(); // Genera el código QR
+
+      // Dibuja el código QR en el canvas
+      const cellSize = 2;
+      const margin = 10;
+      for (let y = 0; y < qr.getModuleCount(); y++) {
+        for (let x = 0; x < qr.getModuleCount(); x++) {
+          if (qr.isDark(y, x)) {
+            ctx.fillStyle = "#000";
+          } else {
+            ctx.fillStyle = "#fff";
+          }
+          ctx.fillRect(x * cellSize + margin, y * cellSize + margin, cellSize, cellSize);
+        }
+      }
+    }
+
+    // Cargar los datos del usuario al cargar la página
+    loadUserData();
+
+    // Función para cerrar sesión
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = 'index.html';
+    }
+  </script>
+
+  <!-- Cargar la biblioteca QRCode Generator -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.min.js"></script>
+</body>
+</html>

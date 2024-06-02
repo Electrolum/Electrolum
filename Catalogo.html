@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electrolum - Catálogo</title>
+  <style>
+    /* Estilos generales */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1E2A38; /* Fondo azul oscuro */
+      margin: 0;
+      padding: 0;
+    }
+
+    main {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: calc(100% - 60px); /* Ajusta el alto del iframe */
+      border: none;
+    }
+
+    /* Estilos para el menú inferior */
+    .bottom-menu {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 100%;
+      background-color: #fff;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+      padding: 10px 0;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      z-index: 1000; /* Asegura que el menú siempre esté arriba */
+    }
+
+    .bottom-menu a {
+      color: #1E2A38;
+      text-decoration: none;
+      font-weight: bold;
+      text-align: center;
+      flex-grow: 1;
+      padding: 10px 0;
+    }
+
+    .bottom-menu a:hover {
+      color: #FFA500;
+    }
+
+    .bottom-menu a img {
+      max-width: 25px;
+      display: block;
+      margin: 0 auto 5px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <iframe src="https://simplebooklet.com/catalogolmparas#page=1" frameborder="0"></iframe>
+  </main>
+
+  <!-- Menú inferior -->
+  <div class="bottom-menu">
+    <a href="main.html">
+      <img src="icons/home-icon.png" alt="Inicio">
+      Inicio
+    </a>
+    <a href="inicio.html">
+      <img src="icons/partner-icon.png" alt="Socio">
+      Socio
+    </a>
+    <a href="perfil.html">
+      <img src="icons/profile-icon.png" alt="Perfil">
+      Perfil
+    </a>
+    <a href="catalogo.html">
+      <img src="icons/catalog-icon.png" alt="Catálogo">
+      Catálogo
+    </a>
+    <a href="buscar-trabajadores.html">
+      <img src="icons/search-icon.png" alt="Electricistas">
+      Workers
+    </a>
+  </div>
+
+</body>
+</html>

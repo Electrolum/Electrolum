@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electrolum - Perfil</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Estilos generales */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1E2A38; /* Fondo azul oscuro */
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header img {
+      max-width: 100px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      color: #FFF;
+      margin: 0;
+    }
+
+    main {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      color: #333;
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .container {
+      margin-bottom: 20px;
+    }
+
+    .container p {
+      color: #666;
+      margin: 10px 0;
+    }
+
+    .container span {
+      font-weight: bold;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    button {
+      background-color: #FFA500; /* Botón de color naranja */
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #FF8C00;
+    }
+
+    .menu-inferior {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #fff;
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
+      padding: 10px 0;
+      font-weight: bold;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-inferior a {
+      color: #333;
+      text-decoration: none;
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .menu-inferior a img {
+      max-width: 25px;
+      display: block;
+      margin: 0 auto 5px;
+    }
+
+    .menu-inferior a span {
+      display: block;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 25px;
+      }
+
+      main {
+        padding: 15px;
+      }
+
+      button {
+        padding: 10px;
+      color: #1E2A38;
+      text-decoration: none;
+      font-weight: bold;
+      text-align: center;
+      flex-grow: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="icons/Logo.png" alt="Logo Electrolum">
+    <h1>Electrolum</h1>
+  </header>
+  <main>
+    <h2>Perfil del Cliente</h2>
+    <div id="profile-info" class="container">
+      <p>Cédula: <span id="clientCedula"></span></p>
+      <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" placeholder="Nombre">
+      </div>
+      <div class="form-group">
+        <label for="apellido">Apellido:</label>
+        <input type="text" id="apellido" placeholder="Apellido">
+      </div>
+    </div>
+    <div class="button-container">
+      <button onclick="updateProfile()">Actualizar</button>
+    </div>
+  </main>
+
+  <div class="menu-inferior">
+    <a href="main.html">
+      <img src="icons/home-icon.png" alt="Inicio">
+      <span>Inicio</span>
+    </a>
+    <a href="inicio.html">
+      <img src="icons/partner-icon.png" alt="Socio">
+      <span>Socio</span>
+    </a>
+    <a href="perfil.html">
+      <img src="icons/profile-icon.png" alt="Perfil">
+      <span>Perfil</span>
+    </a>
+    <a href="catalogo.html">
+      <img src="icons/catalog-icon.png" alt="Catálogo">
+      <span>Catálogo</span>
+    </a>
+    <a href="buscar-trabajadores.html">
+      <img src="icons/search-icon.png" alt="Buscar Trabajadores">
+      <span>Workers</span>
+    </a>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-d65F0ARx2g5n67yGw2e9NYByxnyJ4gU",
+      authDomain: "electrolum-e1f74.firebaseapp.com",
+      projectId: "electrolum-e1f74",
+      storageBucket: "electrolum-e1f74.appspot.com",
+      messagingSenderId: "193218771258",
+      appId: "1:193218771258:web:1221cd686ceb5744f0f803",
+      measurementId: "G-XMK3GKB4RS"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Obtener la cédula del usuario actual almacenada en localStorage
+    const currentUserCedula = localStorage.getItem('currentUser');
+
+    // Función para cargar los datos del usuario
+    async function loadUserData() {
+      // Verificar si el usuario ha iniciado sesión
+      if (!currentUserCedula) {
+        alert('No has iniciado sesión');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        // Obtener los datos del usuario desde Firestore
+        const userDoc = doc(db, 'Tabla 1', currentUserCedula);
+        const userSnap = await getDoc(userDoc);
+
+        // Verificar si el usuario existe
+        if (userSnap.exists()) {
+          const user = userSnap.data();
+          document.getElementById('clientCedula').textContent = user.cedula || '';
+          document.getElementById('nombre').value = user.nombre || '';
+          document.getElementById('apellido').value = user.apellido || '';
+        } else {
+          // Redireccionar si no se encuentra el usuario
+          alert('No se encontró el usuario');
+          window.location.href = 'login.html';
+        }
+      } catch (error) {
+        console.error('Error al cargar los datos del usuario:', error);
+        alert('Ocurrió un error al cargar los datos del usuario');
+      }
+    }
+
+    // Función para actualizar el perfil del usuario
+    async function updateProfile() {
+      const nombre = document.getElementById('nombre').value.trim();
+      const apellido = document.getElementById('apellido').value.trim();
+
+      if (nombre === '' || apellido === '') {
+        alert('Por favor, completa todos los campos');
+        return;
+      }
+
+      try {
+        // Actualizar los datos del usuario en Firestore
+        const userDoc = doc(db, 'Tabla 1', currentUserCedula);
+        await updateDoc(userDoc, {
+          nombre: nombre,
+          apellido: apellido
+        });
+
+        alert('Perfil actualizado correctamente');
+        window.location.href = 'main.html';
+      } catch (error) {
+        console.error('Error al actualizar el perfil:', error);
+        alert('Ocurrió un error al actualizar el perfil');
+      }
+    }
+
+    // Cargar los datos del usuario al cargar la página
+    loadUserData();
+  </script>
+</body>
+</html>
