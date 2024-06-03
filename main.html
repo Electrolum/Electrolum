@@ -3,102 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio - Electrolum</title>
+    <title>Electrolum - Productos</title>
     <style>
-        /* Estilos CSS para la página */
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
-            background-color: #0a215c;
-            color: #fff;
             padding: 20px;
-            margin: 0;
+            background-color: #1a1a1a; /* Fondo azul oscuro */
+            color: #ffa500; /* Color naranjita para texto */
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background-color: #1f4068;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        h1 {
+            text-align: center;
+            color: #ffa500; /* Color naranjita */
         }
-        header {
+        .search-form {
             text-align: center;
             margin-bottom: 20px;
         }
-        .logo {
-            max-width: 150px;
-            height: auto;
+        .search-form input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .category {
             margin-top: 20px;
+            margin-bottom: 10px;
         }
-        h1 {
-            color: #fff;
+        .category h2 {
+            background-color: #ffa500;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
         }
-        .promo-section {
-            background-color: #154360;
-            color: #fff;
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        .product {
+            max-width: 300px;
+            background: #f9f9f9;
             padding: 10px;
             border-radius: 8px;
-            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        .promo-section h2 {
-            margin-top: 0;
-            font-size: 1.5rem;
-        }
-        .promo-section p {
-            font-size: 1.1rem;
-            margin-bottom: 0;
-        }
-        .carousel {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-        }
-        .carousel img {
-            scroll-snap-align: start;
+        .product img {
             max-width: 100%;
-            height: auto;
             border-radius: 8px;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.2s ease;
         }
-        .carousel img:hover {
-            transform: scale(1.05);
+        .product h3 {
+            margin-top: 10px;
+            color: #333;
         }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            padding: 20px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.9);
+        .product p {
+            margin-top: 5px;
+            color: #666;
         }
-        .modal-content {
-            margin: auto;
+        .logo {
             display: block;
-            max-width: 80%;
-            max-height: 80%;
+            margin: 0 auto;
+            max-width: 150px; /* Ajusta el tamaño del logo según sea necesario */
+            margin-bottom: 20px;
         }
-        .close {
-            color: #ccc;
-            font-size: 2rem;
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            cursor: pointer;
-        }
-        footer {
-            margin-top: 20px;
-            text-align: center;
-            color: #ccc;
-        }
-
         /* Estilos para el menú inferior */
         .bottom-menu {
             display: flex;
@@ -106,21 +75,19 @@
             align-items: center;
             width: 100%;
             background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
             padding: 10px 0;
             position: fixed;
             bottom: 0;
             left: 0;
-            z-index: 1000; /* Asegura que el menú siempre esté arriba */
         }
 
         .bottom-menu a {
-            color: #333;
+            color: #1E2A38;
             text-decoration: none;
             font-weight: bold;
             text-align: center;
             flex-grow: 1;
-            padding: 0px 0;
         }
 
         .bottom-menu a:hover {
@@ -130,43 +97,45 @@
         .bottom-menu a img {
             max-width: 25px;
             display: block;
-            margin: 0 auto 2px;
+            margin: 0 auto 5px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <img class="logo" src="icons/Logo.png" alt="Logo de Electrolum">
-            <h1>Bienvenido a Electrolum</h1>
-        </header>
-        
-        <section class="promo-section">
-            <h2>Lamparas Nuevas</h2>
-            <div class="carousel">
-                <img src="https://ae01.alicdn.com/kf/HTB1TDhHXW1s3KVjSZFAq6x_ZXXaF.jpg_640x640Q90.jpg_.webp" alt="Imagen de promoción 1">
-                <img src="https://m.media-amazon.com/images/I/61XsmLAI9OL._AC_UF894,1000_QL80_.jpg" alt="Imagen de promoción 2">
-                <img src="https://ae01.alicdn.com/kf/Scb1cc5e091a54d60b4387cfd5eb0258bt/L-mpara-colgante-Led-con-anillo-geom-trico-candelabros-modernos-para-sala-de-estar-comedor-decoraci.jpg" alt="Imagen de promoción 3">
-            </div>
-        </section>
-        
-        <section class="promo-section">
-            <h2>Novedades</h2>
-            <div class="carousel">
-                <img src="https://m.media-amazon.com/images/I/71SNoJudAqL._AC_UF894,1000_QL80_.jpg" alt="Imagen de novedad 1">
-                <img src="https://m.media-amazon.com/images/I/61lCY0bGYOL._AC_UF894,1000_QL80_.jpg" alt="Imagen de novedad 2">
-                <img src="https://http2.mlstatic.com/D_NQ_NP_698422-MLM50839573546_072022-O.webp" alt="Imagen de novedad 3">
-            </div>
-        </section>
-        
-        <div id="modal" class="modal">
-            <span class="close">&times;</span>
-            <img class="modal-content" id="modal-img">
+    <img src="icons/Logo.png" alt="Electrolum Logo" class="logo">
+    <h1>Productos Electrolum</h1>
+
+    <div class="search-form">
+        <input type="text" id="searchInput" placeholder="Buscar por nombre o código...">
+        <button onclick="searchProducts()">Buscar</button>
+    </div>
+
+    <div class="category" id="electrical">
+        <h2>Eléctrico</h2>
+        <div class="products" id="electrical-products">
+            <!-- Productos eléctricos se listan aquí -->
         </div>
-        
-        <footer>
-            <p>&copy; 2024 Electrolum. Todos los derechos reservados.</p>
-        </footer>
+    </div>
+
+    <div class="category" id="lighting">
+        <h2>Iluminación</h2>
+        <div class="products" id="lighting-products">
+            <!-- Productos de iluminación se listan aquí -->
+        </div>
+    </div>
+
+    <div class="category" id="security">
+        <h2>Seguridad</h2>
+        <div class="products" id="security-products">
+            <!-- Productos de seguridad se listan aquí -->
+        </div>
+    </div>
+
+    <div class="category" id="other">
+        <h2>Otros</h2>
+        <div class="products" id="other-products">
+            <!-- Otros productos se listan aquí -->
+        </div>
     </div>
 
     <!-- Menú inferior -->
@@ -193,22 +162,72 @@
         </a>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script>
-        // Función para mostrar y ocultar el modal con la imagen ampliada
-        var modal = document.getElementById('modal');
-        var modalImg = document.getElementById("modal-img");
-        var imgs = document.getElementsByTagName('img');
-        var close = document.getElementsByClassName("close")[0];
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-d65F0ARx2g5n67yGw2e9NYByxnyJ4gU",
+            authDomain: "electrolum-e1f74.firebaseapp.com",
+            projectId: "electrolum-e1f74",
+            storageBucket: "electrolum-e1f74.appspot.com",
+            messagingSenderId: "193218771258",
+            appId: "1:193218771258:web:1221cd686ceb5744f0f803",
+            measurementId: "G-XMK3GKB4RS"
+        };
 
-        for (var i = 0; i < imgs.length; i++) {
-            imgs[i].onclick = function(){
-                modal.style.display = "block";
-                modalImg.src = this.src;
-            }
+        // Inicialización de Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const electricalProducts = document.getElementById('electrical-products');
+        const lightingProducts = document.getElementById('lighting-products');
+        const securityProducts = document.getElementById('security-products');
+        const otherProducts = document.getElementById('other-products');
+
+        // Función para obtener y mostrar productos por categoría
+        function getProductsByCategory(category, container) {
+            db.collection("Productos").where("categoria", "==", category).get()
+            .then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc) {
+                    const product = doc.data();
+                    const productElement = `
+                        <div class="product">
+                            <img src="${product.imagen}" alt="${product.nombre}">
+                            <h3>${product.nombre}</h3>
+                            <p><strong>Código:</strong> ${product.codigo}</p>
+                            <p><strong>Precio:</strong> $${product.precio.toFixed(2)}</p>
+                        </div>
+                    `;
+                    container.innerHTML += productElement;
+                });
+            })
+            .catch(function(error) {
+                console.error("Error al obtener productos: ", error);
+            });
         }
 
-        close.onclick = function() {
-            modal.style.display = "none";
+        // Mostrar productos por categoría
+        getProductsByCategory("electrical", electricalProducts);
+        getProductsByCategory("lighting", lightingProducts);
+        getProductsByCategory("security", securityProducts);
+        getProductsByCategory("other", otherProducts);
+
+        // Función para buscar productos
+        function searchProducts() {
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+            const allProducts = document.querySelectorAll('.product');
+
+            allProducts.forEach(product => {
+                const productName = product.querySelector('h3').textContent.toLowerCase();
+                const productCode = product.querySelector('p:nth-of-type(1)').textContent.toLowerCase();
+
+                if (productName.includes(searchTerm) || productCode.includes(searchTerm)) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
         }
     </script>
 </body>
