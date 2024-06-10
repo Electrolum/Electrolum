@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electrolum - Productos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #ffa500;
+        }
+        h1 {
+            text-align: center;
+            color: #ffa500;
+        }
+        .search-form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .search-form input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .category {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .category h2 {
+            background-color: #ffa500;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 10px;
+            padding-bottom: 10px;
+        }
+        .product {
+            min-width: 200px;
+            max-width: 300px;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            flex: 0 0 auto; /* Evitar que los productos se reduzcan más de su tamaño mínimo */
+        }
+        .product img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .product h3 {
+            margin-top: 10px;
+            color: #333;
+        }
+        .product p {
+            margin-top: 5px;
+            color: #666;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        .bottom-menu {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
+        .bottom-menu a {
+            color: #1E2A38;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+        }
+        .bottom-menu a:hover {
+            color: #FFA500;
+        }
+        .bottom-menu a img {
+            max-width: 25px;
+            display: block;
+            margin: 0 auto 5px;
+        }
+    </style>
+</head>
+<body>
+    <img src="icons/Logo.png" alt="Electrolum Logo" class="logo">
+    <h1>Productos Electrolum</h1>
+
+    <div class="search-form">
+        <input type="text" id="searchInput" placeholder="Buscar por nombre o código...">
+        <button onclick="searchProducts()">Buscar</button>
+    </div>
+
+    <div class="category" id="other">
+        <h2>Otros</h2>
+        <div class="products" id="other-products">
+            <!-- Otros productos se listan aquí -->
+        </div>
+    </div>
+
+    <div class="bottom-menu">
+        <a href="main.html">
+            <img src="icons/home-icon.png" alt="Inicio">
+            Inicio
+        </a>
+        <a href="inicio.html">
+            <img src="icons/partner-icon.png" alt="Socio">
+            Socio
+        </a>
+        <a href="perfil.html">
+            <img src="icons/profile-icon.png" alt="Perfil">
+            Perfil
+        </a>
+        <a href="catalogo.html">
+            <img src="icons/catalog-icon.png" alt="Catálogo">
+            Catálogo
+        </a>
+        <a href="buscar-trabajadores.html">
+            <img src="icons/search-icon.png" alt="Electricistas">
+            Workers
+        </a>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-d65F0ARx2g5n67yGw2e9NYByxnyJ4gU",
+            authDomain: "electrolum-e1f74.firebaseapp.com",
+            projectId: "electrolum-e1f74",
+            storageBucket: "electrolum-e1f74.appspot.com",
+            messagingSenderId: "193218771258",
+            appId: "1:193218771258:web:1221cd686ceb5744f0f803",
+            measurementId: "G-XMK3GKB4RS"
+        };
+
+        // Inicialización de Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const electricalProducts = document.getElementById('electrical-products');
+        const lightingProducts = document.getElementById('lighting-products');
+        const securityProducts = document.getElementById('security-products');
+        const otherProducts = document.getElementById('other-products');
+
+        // Función para obtener y mostrar productos por categoría
+        function getProductsByCategory(category, container) {
+            db.collection("Productos").where("categoria", "==", category).get()
+            .then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc) {
+                    const product = doc.data();
+                    const productElement = `
+                        <div class="product">
+                            <img src="${product.imagen}" alt="${product.nombre}">
+                            <h3>${product.nombre}</h3>
+                            <p><strong>Código:</strong> ${product.codigo}</p>
+                            <p><strong>Precio:</strong> $${product.precio.toFixed(2)}</p>
+                        </div>
+                    `;
+                    container.innerHTML += productElement;
+                });
+            })
+            .catch(function(error) {
+                console.error("Error al obtener productos: ", error);
+            });
+        }
+
+        // Mostrar productos por categoría
+        getProductsByCategory("electrical", electricalProducts);
+        getProductsByCategory("lighting", lightingProducts);
+        getProductsByCategory("security", securityProducts);
+        getProductsByCategory("other", otherProducts);
+
+        // Función para buscar productos
+        function searchProducts() {
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+            const allProducts = document.querySelectorAll('.product');
+
+            allProducts.forEach(product => {
+                const productName = product.querySelector('h3').textContent.toLowerCase();
+                const productCode = product.querySelector('p:nth-of-type(1)').textContent.toLowerCase();
+
+                if (productName.includes(searchTerm) || productCode.includes(searchTerm)) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
