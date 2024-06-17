@@ -125,7 +125,10 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        const electricalProducts = document.getElementById('electrical-products');
         const lightingProducts = document.getElementById('lighting-products');
+        const securityProducts = document.getElementById('security-products');
+        const otherProducts = document.getElementById('other-products');
 
         // Función para obtener y mostrar productos por categoría
         function getProductsByCategory(category, container) {
@@ -150,10 +153,7 @@
         }
 
         // Mostrar productos por categoría
-        getProductsByCategory("electrical", electricalProducts);
         getProductsByCategory("lighting", lightingProducts);
-        getProductsByCategory("security", securityProducts);
-        getProductsByCategory("other", otherProducts);
 
         // Función para buscar productos
         function searchProducts() {
