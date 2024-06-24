@@ -17,12 +17,22 @@
 
         .container {
             text-align: center;
-            position: relative;
+            width: 80%;
+            max-width: 600px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
         }
 
         #ruleta-container {
             margin-bottom: 20px;
             position: relative;
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Evita que la ruleta se desborde */
         }
 
         #flecha {
@@ -42,9 +52,9 @@
             font-size: 24px;
             display: none;
             position: absolute;
-            top: 50%;
+            top: calc(100% + 10px);
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.9);
             color: #001f3f;
             padding: 20px;
@@ -72,10 +82,16 @@
         #girar-btn:hover:not(:disabled) {
             background-color: #0056b3;
         }
+
+        #ruleta {
+            width: 100%; /* Asegura que el canvas ocupe todo el contenedor */
+            height: auto; /* Ajusta la altura automáticamente */
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <h1>Ruleta de Premios</h1>
         <div id="ruleta-container">
             <canvas id="ruleta" width="500" height="500"></canvas>
             <div id="flecha"></div>
