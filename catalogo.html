@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruleta de Premios</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #001f3f;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+        }
+
+        #ruleta-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        #flecha {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%) rotate(180deg);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 20px solid #FF0000;
+        }
+
+        .premio {
+            margin-top: 20px;
+            font-size: 24px;
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            color: #001f3f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        #girar-btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        #girar-btn:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+
+        #girar-btn:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="ruleta-container">
+            <canvas id="ruleta" width="500" height="500"></canvas>
+            <div id="flecha"></div>
+        </div>
+        <button id="girar-btn">Girar</button>
+        <div id="premio" class="premio"></div>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-d65F0ARx2g5n67yGw2e9NYByxnyJ4gU",
+            authDomain: "electrolum-e1f74.firebaseapp.com",
+            projectId: "electrolum-e1f74",
+            storageBucket: "electrolum-e1f74.appspot.com",
+            messagingSenderId: "193218771258",
+            appId: "1:193218771258:web:1221cd686ceb5744f0f803",
+            measurementId: "G-XMK3GKB4RS"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const currentUser = localStorage.getItem('currentUser');
+
+            if (!currentUser) {
+                alert('Debe iniciar sesión para acceder a la ruleta.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const premios = [
+                "10% de Descuento",
+                "5% de Descuento",
+                "Será la Próxima",
+                "Una Agenda",
+                "Cajita Misteriosa"
+            ];
+
+            const colores = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF"];
+
+            const canvas = document.getElementById('ruleta');
+            const ctx = canvas.getContext('2d');
+            const premioDiv = document.getElementById('premio');
+            const girarBtn = document.getElementById('girar-btn');
+
+            const anguloPorSegmento = (2 * Math.PI) / premios.length;
+            let anguloActual = 0;
+            let girando = false;
+
+            const dibujarRuleta = () => {
+                for (let i = 0; i < premios.length; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(250, 250);
+                    ctx.arc(250, 250, 250, anguloActual, anguloActual + anguloPorSegmento);
+                    ctx.fillStyle = colores[i];
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.save();
+                    ctx.translate(250, 250);
+                    ctx.rotate(anguloActual + anguloPorSegmento / 2);
+                    ctx.fillStyle = "#FFFFFF";
+                    ctx.fillText(premios[i], 150, 10);
+                    ctx.restore();
+
+                    anguloActual += anguloPorSegmento;
+                }
+            };
+
+            const obtenerPremio = (angulo) => {
+                const index = Math.floor((angulo / (2 * Math.PI)) * premios.length);
+                return premios[index];
+            };
+
+            const guardarPremio = async (premio) => {
+                const timestamp = new Date().getTime();
+                await setDoc(doc(db, 'users', currentUser), {
+                    premio: premio,
+                    fecha: timestamp
+                });
+                localStorage.setItem(`premio_${currentUser}`, premio);
+                localStorage.setItem(`fecha_${currentUser}`, timestamp);
+                mostrarPremio(premio);
+            };
+
+            const mostrarPremio = (premio) => {
+                premioDiv.textContent = `¡Felicidades! Has ganado: ${premio}`;
+                premioDiv.style.display = 'block';
+            };
+
+            const verificarPremioGuardado = async () => {
+                const userDoc = doc(db, 'users', currentUser);
+                const userSnap = await getDoc(userDoc);
+                const ahora = new Date().getTime();
+
+                if (userSnap.exists()) {
+                    const data = userSnap.data();
+                    const premioGuardado = data.premio;
+                    const fechaGuardada = data.fecha;
+
+                    if (premioGuardado && fechaGuardada && (ahora - fechaGuardada) < 24 * 60 * 60 * 1000) {
+                        mostrarPremio(premioGuardado);
+                        girarBtn.disabled = true;
+                    } else {
+                        localStorage.removeItem(`premio_${currentUser}`);
+                        localStorage.removeItem(`fecha_${currentUser}`);
+                        premioDiv.style.display = 'none';
+                        girarBtn.disabled = false;
+                    }
+                }
+            };
+
+            const girarRuleta = async () => {
+                if (girando) return;
+                girando = true;
+
+                const userDoc = doc(db, 'users', currentUser);
+                const userSnap = await getDoc(userDoc);
+                const data = userSnap.data();
+
+                if (data && data.fecha) {
+                    const ahora = new Date().getTime();
+                    const ultimaFechaGiro = data.fecha;
+
+                    // Verificar si han pasado al menos 24 horas desde el último giro
+                    if ((ahora - ultimaFechaGiro) < 24 * 60 * 60 * 1000) {
+                        alert('Ya ha girado la ruleta en las últimas 24 horas.');
+                        girando = false;
+                        return;
+                    }
+                }
+
+                const anguloGiro = Math.random() * 2 * Math.PI + 10 * 2 * Math.PI; // Gira varias veces
+                let anguloFinal = 0;
+
+                const animacionGiro = () => {
+                    anguloFinal += (anguloGiro - anguloFinal) * 0.1;
+                    if (Math.abs(anguloGiro - anguloFinal) < 0.01) {
+                        girando = false;
+                        const premio = obtenerPremio(anguloFinal % (2 * Math.PI));
+                        guardarPremio(premio);
+                        return;
+                    }
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.save();
+                    ctx.translate(250, 250);
+                    ctx.rotate(anguloFinal);
+                    ctx.translate(-250, -250);
+                    dibujarRuleta();
+                    ctx.restore();
+                    requestAnimationFrame(animacionGiro);
+                };
+
+                animacionGiro();
+            };
+
+            dibujarRuleta();
+            await verificarPremioGuardado();
+
+            girarBtn.addEventListener('click', girarRuleta);
+        });
+    </script>
+</body>
+</html>
