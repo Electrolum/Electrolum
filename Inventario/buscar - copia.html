@@ -7,6 +7,8 @@
     <!-- Incluir Firebase SDK (forma tradicional) -->
     <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database-compat.js"></script>
+    <!-- Incluir Quagga.js para escanear códigos de barras -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <!-- Configuración de Firebase -->
     <script>
         const firebaseConfig = {
@@ -27,60 +29,86 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f0f0f0;
+            color: #333;
         }
         h2 {
             text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
         }
         form {
-            margin-bottom: 20px;
             text-align: center;
+            margin-bottom: 20px;
         }
-        input[type="text"] {
-            padding: 8px;
-            width: 300px;
-            margin-right: 10px;
+        input[type="text"], select {
+            padding: 10px;
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
         table, th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
+            text-align: left;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #007bff;
+            color: white;
+        }
+        tr:hover td {
+            background-color: #f0f0f0;
+        }
+        #cameraPreview {
+            width: 100%;
+            height: auto;
         }
     </style>
 </head>
 <body>
     <h2>Búsqueda de Productos</h2>
     <form>
-        <label for="searchInput">Buscar por:</label>
+        <label for="searchInput" style="color: #007bff;">Buscar por:</label><br>
         <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Escribe aquí...">
+        <button type="button" onclick="scanBarcode()">Escanear Código</button>
         <select id="searchColumn">
-            <option value="Columna1">Columna1</option>
-            <option value="Columna2">Columna2</option>
+            <option value="Columna1">Codigo</option>
+            <option value="Columna2">Descripcion</option>
             <!-- Agrega más opciones según las columnas que tengas -->
         </select>
     </form>
 
-    <table id="productTable">
-        <thead>
-            <tr>
-                <th>Columna1</th>
-                <th>Columna2</th>
-                <th>Columna4</th>
-                <th>Columna6</th>
-                <th>Columna7</th>
-                <!-- Añadir más th según las columnas que deseas mostrar -->
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-            <!-- Aquí se llenarán dinámicamente los resultados de la búsqueda -->
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table id="productTable">
+            <thead>
+                <tr>
+                    <th>Codigo</th>
+                    <th>Descripcion</th>
+                    <th>Stock</th>
+                    <th>Precio A</th>
+                    <th>Precio B</th>
+                    <!-- Añadir más th según las columnas que deseas mostrar -->
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Aquí se llenarán dinámicamente los resultados de la búsqueda -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="cameraPreview"></div>
 
     <script>
         function searchProducts() {
@@ -111,6 +139,36 @@
                 .catch(error => {
                     console.error("Error al buscar productos:", error);
                 });
+        }
+
+        function scanBarcode() {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#cameraPreview'),
+                    constraints: {
+                        width: 640,
+                        height: 480,
+                        facingMode: "environment" // Puede ser "user" para la cámara frontal
+                    }
+                },
+                decoder: {
+                    readers: ["ean_reader"]
+                }
+            }, function(err) {
+                if (err) {
+                    console.error("Error al inicializar Quagga:", err);
+                    return;
+                }
+                Quagga.start();
+            });
+
+            Quagga.onDetected(function(result) {
+                const barcode = result.codeResult.code;
+                document.getElementById('searchInput').value = barcode;
+                Quagga.stop();
+            });
         }
     </script>
 </body>
