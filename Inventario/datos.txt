@@ -1,0 +1,22 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDivZ41nwh-hyigrow8HvfDlvG8qycx6fs",
+  authDomain: "inventario-electrolum.firebaseapp.com",
+  projectId: "inventario-electrolum",
+  storageBucket: "inventario-electrolum.appspot.com",
+  messagingSenderId: "675938330850",
+  appId: "1:675938330850:web:08b4d7dc85eccfee01d6bb",
+  measurementId: "G-42M0DKEZ8M"
+  databaseURL: "https://inventario-electrolum-default-rtdb.firebaseio.com/"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Importar CSV a Firebase</title>
+    <!-- Incluir Firebase SDK (forma tradicional) -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database-compat.js"></script>
+    <!-- Configuración de Firebase -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "TuApiKey",
+            authDomain: "inventario-electrolum.firebaseapp.com",
+            databaseURL: "https://inventario-electrolum-default-rtdb.firebaseio.com/",
+            projectId: "inventario-electrolum",
+            storageBucket: "inventario-electrolum.appspot.com",
+            messagingSenderId: "TuSenderId",
+            appId: "TuAppId",
+            measurementId: "TuMeasurementId"
+        };
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            padding: 8px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h2>Importar CSV a Firebase</h2>
+    <form id="csvUploadForm" enctype="multipart/form-data">
+        <input type="file" id="csvFile" name="csvFile" accept=".csv">
+        <button type="button" onclick="uploadCSV()">Importar CSV a Base de Datos</button>
+    </form>
+
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>Columna 1</th>
+                <th>Columna 2</th>
+                <!-- Agrega más th según las columnas que tengas en tu CSV -->
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí se llenarán dinámicamente los datos desde Firebase -->
+        </tbody>
+    </table>
+
+    <script>
+        function uploadCSV() {
+            const input = document.getElementById('csvFile');
+            const file = input.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.readAsText(file, 'UTF-8');
+
+                reader.onload = function(e) {
+                    const csv = e.target.result;
+                    console.log('Contenido del CSV:', csv);
+
+                    const lines = csv.split(/\r?\n/);
+                    console.log('Número de líneas:', lines.length);
+
+                    // Obtener nombres de columnas (primera línea del CSV)
+                    const headers = lines[0].split(',');
+                    console.log('Headers:', headers);
+
+                    // Convertir CSV a array de objetos JSON
+                    const products = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        const fields = lines[i].split(',');
+                        if (fields.length === headers.length) {
+                            const product = {};
+                            for (let j = 0; j < headers.length; j++) {
+                                // Ajusta los nombres de las claves según las columnas de tu CSV
+                                product['Columna' + (j + 1)] = fields[j].trim();
+                            }
+                            products.push(product);
+                        }
+                    }
+
+                    // Subir datos a Firebase
+                    if (products.length > 0) {
+                        const productsRef = firebase.database().ref('productos');
+                        products.forEach(function(product) {
+                            productsRef.push(product);
+                        });
+                        alert('Datos del CSV importados exitosamente.');
+                    } else {
+                        alert('El archivo CSV está vacío o no tiene el formato esperado.');
+                    }
+                };
+
+                reader.onerror = function(e) {
+                    console.error('Error al leer el archivo:', e.target.error);
+                };
+            } else {
+                alert('Por favor selecciona un archivo CSV.');
+            }
+        }
+
+        // Cargar productos desde Firebase y mostrar en la tabla
+        firebase.database().ref('productos').on('value', function(snapshot) {
+            const productTable = document.getElementById('productTable').getElementsByTagName('tbody')[0];
+            productTable.innerHTML = '';
+            snapshot.forEach(function(childSnapshot) {
+                const productData = childSnapshot.val();
+                const row = productTable.insertRow();
+                // Ajusta según las columnas que tengas en tu CSV
+                row.innerHTML = `<td>${productData.Columna1}</td><td>${productData.Columna2}</td>`;
+            });
+        });
+    </script>
+</body>
+</html>
