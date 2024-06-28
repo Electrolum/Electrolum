@@ -57,8 +57,13 @@
 <body>
     <h2>Búsqueda de Productos</h2>
     <form>
-        <label for="searchInput"></label>
+        <label for="searchInput">Buscar por:</label>
         <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Escribe aquí...">
+        <select id="searchColumn">
+            <option value="Columna1">Columna1</option>
+            <option value="Columna2">Columna2</option>
+            <!-- Agrega más opciones según las columnas que tengas -->
+        </select>
     </form>
 
     <table id="productTable">
@@ -79,28 +84,33 @@
 
     <script>
         function searchProducts() {
-            const searchValue = document.getElementById('searchInput').value.toLowerCase().trim();
+            const searchValue = document.getElementById('searchInput').value.trim().toLowerCase();
+            const selectedColumn = document.getElementById('searchColumn').value;
             const productsRef = firebase.database().ref('productos');
 
-            // Consultar por Columna1
-            const query1 = productsRef.orderByChild('Columna1').startAt(searchValue).endAt(searchValue + '\uf8ff').once('value');
-            // Consultar por Columna2
-            const query2 = productsRef.orderByChild('Columna2').startAt(searchValue).endAt(searchValue + '\uf8ff').once('value');
+            // Limpiar la tabla antes de realizar una nueva búsqueda
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
 
-            Promise.all([query1, query2]).then(results => {
-                const tableBody = document.getElementById('tableBody');
-                tableBody.innerHTML = '';
-
-                results.forEach(snapshot => {
+            // Realizar la consulta en Firebase
+            productsRef.once('value')
+                .then(snapshot => {
                     snapshot.forEach(childSnapshot => {
                         const productData = childSnapshot.val();
-                        const row = tableBody.insertRow();
-                        // Mostrar las columnas deseadas en la tabla
-                        row.innerHTML = `<td>${productData.Columna1}</td><td>${productData.Columna2}</td><td>${productData.Columna4}</td><td>${productData.Columna6}</td><td>${productData.Columna7}</td>`;
-                        // Añadir más celdas según las columnas que deseas mostrar
+                        const columnValue = productData[selectedColumn].toString().toLowerCase();
+
+                        // Utilizar una expresión regular para buscar cualquier parte del valor
+                        const regex = new RegExp(searchValue, 'gi'); // 'gi' para búsqueda global e insensible a mayúsculas y minúsculas
+                        if (columnValue.match(regex)) {
+                            const row = tableBody.insertRow();
+                            row.innerHTML = `<td>${productData.Columna1}</td><td>${productData.Columna2}</td><td>${productData.Columna4}</td><td>${productData.Columna6}</td><td>${productData.Columna7}</td>`;
+                            // Añadir más celdas según las columnas que deseas mostrar
+                        }
                     });
+                })
+                .catch(error => {
+                    console.error("Error al buscar productos:", error);
                 });
-            });
         }
     </script>
 </body>
