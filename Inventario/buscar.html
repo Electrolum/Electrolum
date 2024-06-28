@@ -27,18 +27,25 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f0f0f0;
+            color: #333;
         }
         h2 {
             text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
         }
         form {
             margin-bottom: 20px;
             text-align: center;
         }
         input[type="text"] {
-            padding: 8px;
+            padding: 10px;
             width: 300px;
             margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
         }
         table {
             width: 100%;
@@ -47,21 +54,32 @@
         }
         table, th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
+            text-align: left;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #007bff;
+            color: white;
+        }
+        td {
+            background-color: #ffffff;
+        }
+        th, td {
+            transition: background-color 0.3s ease;
+        }
+        tr:hover td {
+            background-color: #f0f0f0;
         }
     </style>
 </head>
 <body>
     <h2>Búsqueda de Productos</h2>
     <form>
-        <label for="searchInput">Buscar por:</label>
-        <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Escribe aquí...">
-        <select id="searchColumn">
-            <option value="Columna1">Columna1</option>
-            <option value="Columna2">Columna2</option>
+        <label for="searchInput" style="color: #007bff;">Buscar por:</label>
+        <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Escribe aquí..." style="border-color: #007bff;">
+        <select id="searchColumn" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
+            <option value="Columna1">Codigo</option>
+            <option value="Columna2">Descripcion</option>
             <!-- Agrega más opciones según las columnas que tengas -->
         </select>
     </form>
@@ -69,11 +87,11 @@
     <table id="productTable">
         <thead>
             <tr>
-                <th>Columna1</th>
-                <th>Columna2</th>
-                <th>Columna4</th>
-                <th>Columna6</th>
-                <th>Columna7</th>
+                <th>Codigo</th>
+                <th>Descripcion</th>
+                <th>Stock</th>
+                <th>Precio A</th>
+                <th>Precio B</th>
                 <!-- Añadir más th según las columnas que deseas mostrar -->
             </tr>
         </thead>
