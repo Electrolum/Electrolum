@@ -24,7 +24,6 @@
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            margin-right: 10px;
         }
         .category {
             margin-top: 20px;
@@ -76,7 +75,6 @@
 
     <div class="search-form">
         <input type="text" id="searchInput" placeholder="Buscar por nombre o código...">
-        <button onclick="searchProducts()">Buscar</button>
     </div>
 
     <div class="category" id="lighting">
@@ -133,7 +131,7 @@
         // Mostrar productos por categoría
         getProductsByCategory("lighting", lightingProducts);
 
-        // Función para buscar productos
+        // Función para buscar productos en tiempo real
         function searchProducts() {
             const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
             const allProducts = document.querySelectorAll('.product');
@@ -149,6 +147,9 @@
                 }
             });
         }
+
+        // Agrega un event listener al input para ejecutar la búsqueda en tiempo real
+        document.getElementById('searchInput').addEventListener('input', searchProducts);
     </script>
 </body>
 </html>
