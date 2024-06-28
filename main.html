@@ -18,13 +18,46 @@
         .search-form {
             text-align: center;
             margin-bottom: 20px;
+            position: relative;
         }
         .search-form input[type="text"] {
             width: 300px;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+        }
+        .search-results {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: none;
+            z-index: 1;
+        }
+        .search-results div {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .search-results div:last-child {
+            border-bottom: none;
+        }
+        .search-results div:hover {
+            background-color: #f1f1f1;
+        }
+        .search-results img {
+            max-width: 50px;
+            max-height: 50px;
             margin-right: 10px;
+            border-radius: 4px;
         }
         .category {
             margin-top: 20px;
@@ -118,7 +151,7 @@
 
     <div class="search-form">
         <input type="text" id="searchInput" placeholder="Buscar por nombre o código...">
-        <button onclick="searchProducts()">Buscar</button>
+        <div class="search-results" id="searchResults"></div>
     </div>
 
     <div class="category" id="electrical">
@@ -214,6 +247,7 @@
         const lightingProducts = document.getElementById('lighting-products');
         const securityProducts = document.getElementById('security-products');
         const otherProducts = document.getElementById('other-products');
+        const searchResults = document.getElementById('searchResults');
 
         // Función para obtener y mostrar productos por categoría
         function getProductsByCategory(category, container) {
@@ -245,18 +279,45 @@
         // Función para buscar productos
         function searchProducts() {
             const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-            const allProducts = document.querySelectorAll('.product');
+            searchResults.innerHTML = '';
+            searchResults.style.display = 'none';
 
-            allProducts.forEach(product => {
-                const productName = product.querySelector('h3').textContent.toLowerCase();
-                const productCode = product.querySelector('p:nth-of-type(1)').textContent.toLowerCase();
+            if (searchTerm.length > 0) {
+                db.collection("Productos").get()
+                .then(function(querySnapshot) {
+                    querySnapshot.forEach(function(doc) {
+                        const product = doc.data();
+                        const productName = product.nombre.toLowerCase();
+                        const productCode = product.codigo.toLowerCase();
 
-                if (productName.includes(searchTerm) || productCode.includes(searchTerm)) {
-                    product.style.display = 'block';
-                } else {
-                    product.style.display = 'none';
-                }
-            });
+                        if (productName.includes(searchTerm) || productCode.includes(searchTerm)) {
+                            const resultElement = `
+                                <div onclick="showProduct('${product.id}')">
+                                    <img src="${product.imagen}" alt="${product.nombre}">
+                                    <div>
+                                        <h4>${product.nombre}</h4>
+                                        <p><strong>Código:</strong> ${product.codigo}</p>
+                                    </div>
+                                </div>
+                            `;
+                            searchResults.innerHTML += resultElement;
+                        }
+                    });
+                    searchResults.style.display = 'block';
+                })
+                .catch(function(error) {
+                    console.error("Error al buscar productos: ", error);
+                });
+            }
+        }
+
+        // Mostrar resultados de búsqueda en tiempo real
+        document.getElementById('searchInput').addEventListener('input', searchProducts);
+
+        // Función para mostrar un producto específico (puedes adaptarla según tus necesidades)
+        function showProduct(productId) {
+            // Aquí puedes implementar la lógica para mostrar un producto específico
+            alert(`Producto ID: ${productId}`);
         }
     </script>
 </body>
