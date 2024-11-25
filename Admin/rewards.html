@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Recompensas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #4CAF50;
+            padding: 0px 20px;
+            color: white;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 15px;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+        }
+        .menu {
+            display: flex;
+            gap: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, button, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .reward-list {
+            margin-top: 20px;
+        }
+        .reward-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f1f1f1;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .reward-item img {
+            height: 50px;
+            width: 50px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+            }
+            .menu.show {
+                display: flex;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .navbar a {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menú de navegación -->
+    <div class="navbar">
+        <div class="menu-toggle">
+            <span>&#9776;</span>
+        </div>
+        <div class="logo">
+            <h1>Electro Puntos</h1>
+        </div>
+        <div class="menu">
+            <a href="admin.html">Inicio</a>
+            <a href="canjear.html">Canjear</a>
+            <a href="reportes.html">Reportes</a>
+            <a href="usuarios.html">Clientes</a>
+            <a href="rewards.html">Rewards</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Administrar Recompensas</h1>
+        <form id="rewardForm">
+            <input type="hidden" id="rewardId">
+            <label for="rewardName">Nombre de la recompensa</label>
+            <input type="text" id="rewardName" placeholder="Nombre de la recompensa" required>
+            <label for="rewardPoints">Puntos requeridos</label>
+            <input type="number" id="rewardPoints" placeholder="Puntos requeridos" required>
+            <label for="rewardImageUrl">URL de la imagen</label>
+            <input type="text" id="rewardImageUrl" placeholder="URL de la imagen" required>
+            <button type="submit">Guardar Recompensa</button>
+        </form>
+
+        <h2>Lista de Recompensas</h2>
+        <div id="rewardsList" class="reward-list"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-d65F0ARx2g5n67yGw2e9NYByxnyJ4gU",
+            authDomain: "electrolum-e1f74.firebaseapp.com",
+            projectId: "electrolum-e1f74",
+            storageBucket: "electrolum-e1f74.appspot.com",
+            messagingSenderId: "193218771258",
+            appId: "1:193218771258:web:1221cd686ceb5744f0f803"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const rewardForm = document.getElementById('rewardForm');
+        const rewardsList = document.getElementById('rewardsList');
+
+        // Guardar o actualizar recompensa
+        rewardForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const rewardId = document.getElementById('rewardId').value;
+            const rewardName = document.getElementById('rewardName').value.trim();
+            const rewardPoints = parseInt(document.getElementById('rewardPoints').value, 10);
+            const rewardImageUrl = document.getElementById('rewardImageUrl').value.trim();
+
+            if (rewardId) {
+                // Actualizar recompensa existente
+                await db.collection('Rewards').doc(rewardId).update({
+                    name: rewardName,
+                    points: rewardPoints,
+                    imageUrl: rewardImageUrl
+                });
+                alert('Recompensa actualizada correctamente');
+            } else {
+                // Crear nueva recompensa
+                await db.collection('Rewards').add({
+                    name: rewardName,
+                    points: rewardPoints,
+                    imageUrl: rewardImageUrl
+                });
+                alert('Recompensa creada correctamente');
+            }
+
+            rewardForm.reset();
+            loadRewards();
+        });
+
+        // Cargar recompensas
+        async function loadRewards() {
+            rewardsList.innerHTML = '';
+            const rewardsSnapshot = await db.collection('Rewards').get();
+            rewardsSnapshot.forEach((doc) => {
+                const reward = doc.data();
+                const rewardDiv = document.createElement('div');
+                rewardDiv.classList.add('reward-item');
+                rewardDiv.innerHTML = `
+                    <div>
+                        <img src="${reward.imageUrl}" alt="${reward.name}">
+                        <strong>${reward.name}</strong> (${reward.points} puntos)
+                    </div>
+                    <div>
+                        <button onclick="editReward('${doc.id}', '${reward.name}', ${reward.points}, '${reward.imageUrl}')">Editar</button>
+                        <button onclick="deleteReward('${doc.id}')">Eliminar</button>
+                    </div>
+                `;
+                rewardsList.appendChild(rewardDiv);
+            });
+        }
+
+        // Editar recompensa
+        function editReward(id, name, points, imageUrl) {
+            document.getElementById('rewardId').value = id;
+            document.getElementById('rewardName').value = name;
+            document.getElementById('rewardPoints').value = points;
+            document.getElementById('rewardImageUrl').value = imageUrl;
+        }
+
+        // Eliminar recompensa
+        async function deleteReward(id) {
+            if (confirm('¿Seguro que deseas eliminar esta recompensa?')) {
+                await db.collection('Rewards').doc(id).delete();
+                alert('Recompensa eliminada correctamente');
+                loadRewards();
+            }
+        }
+
+        // Inicializar recompensas
+        loadRewards();
+
+        // Menú responsivo
+        const menuToggle = document.querySelector('.menu-toggle');
+        const menu = document.querySelector('.menu');
+
+        menuToggle.addEventListener('click', () => {
+            menu.classList.toggle('show');
+        });
+    </script>
+</body>
+</html>
