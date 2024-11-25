@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canjeo de Recompensas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #4CAF50;
+            padding: 0px 20px;
+            color: white;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 15px;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+        }
+        .menu {
+            display: flex;
+            gap: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .rewards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .reward {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .reward img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .reward h3 {
+            margin: 10px 0;
+            color: #333;
+        }
+        .reward p {
+            color: #555;
+        }
+        .reward button {
+            background-color: #007BFF;
+            margin: 10px;
+        }
+        .reward button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+            }
+            .menu.show {
+                display: flex;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .navbar a {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menú de navegación -->
+    <div class="navbar">
+        <div class="menu-toggle">
+            <span>&#9776;</span>
+        </div>
+        <div class="logo">
+            <h1>Electro Puntos</h1>
+        </div>
+        <div class="menu">
+            <a href="admin.html">Inicio</a>
+            <a href="reportes.html">Reportes</a>
+            <a href="usuarios.html">Clientes</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Canjeo de Recompensas</h1>
+        <form id="searchForm">
+            <input type="text" id="cedula" name="cedula" placeholder="Ingrese su número de cédula" required>
+            <button type="submit">Buscar Usuario</button>
+        </form>
+        <h2 id="userDetails">Usuario: -- | Puntos disponibles: --</h2>
+        <div id="rewardsContainer" class="rewards"></div>
+        <p id="error" class="error" style="display: none;">Usuario no encontrado.</p>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script>
+        // Configura Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-d65F0ARx2g5n67yGw2e9NYByxnyJ4gU",
+            authDomain: "electrolum-e1f74.firebaseapp.com",
+            projectId: "electrolum-e1f74",
+            storageBucket: "electrolum-e1f74.appspot.com",
+            messagingSenderId: "193218771258",
+            appId: "1:193218771258:web:1221cd686ceb5744f0f803"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const searchForm = document.getElementById('searchForm');
+        const userDetails = document.getElementById('userDetails');
+        const rewardsContainer = document.getElementById('rewardsContainer');
+        const error = document.getElementById('error');
+
+        let currentPoints = 0;
+        let currentUserName = "";
+
+        searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const cedula = searchForm.cedula.value.trim();
+            const userRef = db.collection('Tabla 1').doc(cedula);
+
+            try {
+                const doc = await userRef.get();
+                if (doc.exists) {
+                    const userData = doc.data();
+                    currentPoints = userData.puntos;
+                    currentUserName = `${userData.nombre} ${userData.apellido}`;
+                    userDetails.textContent = `Usuario: ${currentUserName} | Puntos disponibles: ${currentPoints}`;
+                    error.style.display = 'none';
+
+                    // Mostrar recompensas
+                    loadRewards();
+                } else {
+                    userDetails.textContent = `Usuario: -- | Puntos disponibles: --`;
+                    rewardsContainer.innerHTML = '';
+                    error.style.display = 'block';
+                }
+            } catch (err) {
+                console.error("Error al buscar usuario:", err);
+            }
+        });
+
+        async function loadRewards() {
+            rewardsContainer.innerHTML = '';
+            try {
+                const rewardsSnapshot = await db.collection('Rewards').get();
+                rewardsSnapshot.forEach((doc) => {
+                    const reward = doc.data();
+                    if (reward.points <= currentPoints) {
+                        const rewardDiv = document.createElement('div');
+                        rewardDiv.classList.add('reward');
+                        rewardDiv.innerHTML = `
+                            <img src="${reward.imageUrl}" alt="${reward.name}">
+                            <h3>${reward.name}</h3>
+                            <p>${reward.points} puntos</p>
+                            <button data-id="${doc.id}" data-points="${reward.points}">Canjear</button>
+                        `;
+                        rewardsContainer.appendChild(rewardDiv);
+                    }
+                });
+
+                if (rewardsContainer.innerHTML === '') {
+                    rewardsContainer.innerHTML = '<p>No hay recompensas disponibles.</p>';
+                }
+            } catch (err) {
+                console.error("Error al cargar recompensas:", err);
+            }
+        }
+
+        rewardsContainer.addEventListener('click', async (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                const rewardId = e.target.dataset.id;
+                const rewardPoints = parseInt(e.target.dataset.points, 10);
+
+                if (currentPoints >= rewardPoints) {
+                    const cedula = searchForm.cedula.value.trim();
+                    const userRef = db.collection('Tabla 1').doc(cedula);
+                    const redeemRef = db.collection('Canjes').doc();
+
+                    try {
+                        await db.runTransaction(async (transaction) => {
+                            const userDoc = await transaction.get(userRef);
+                            if (!userDoc.exists) throw "El usuario no existe";
+
+                            const newPoints = userDoc.data().puntos - rewardPoints;
+                            transaction.update(userRef, { puntos: newPoints });
+
+                            transaction.set(redeemRef, {
+                                usuario: cedula,
+                                nombreUsuario: currentUserName,
+                                recompensa: rewardId,
+                                puntosGastados: rewardPoints,
+                                fecha: new Date()
+                            });
+                        });
+
+                        alert('Recompensa canjeada con éxito.');
+                        currentPoints -= rewardPoints;
+                        userDetails.textContent = `Usuario: ${currentUserName} | Puntos disponibles: ${currentPoints}`;
+                        loadRewards();
+                    } catch (err) {
+                        console.error("Error al canjear recompensa:", err);
+                        alert('Error al canjear la recompensa.');
+                    }
+                } else {
+                    alert('No tienes suficientes puntos para esta recompensa.');
+                }
+            }
+        });
+
+        // Menú responsivo
+        const menuToggle = document.querySelector('.menu-toggle');
+        const menu = document.querySelector('.menu');
+
+        menuToggle.addEventListener('click', () => {
+            menu.classList.toggle('show');
+        });
+    </script>
+</body>
+</html>
