@@ -8,46 +8,66 @@
   <style>
     /* Estilos generales */
     body {
-      font-family: Arial, sans-serif;
-      background-color: #1E2A38; /* Fondo azul oscuro */
+      font-family: 'Poppins', sans-serif; /* Fuente moderna y clara */
+      background-color: #1E2A38; /* Fondo azul oscuro original */
+      color: #fff;
       margin: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       min-height: 100vh;
-      padding: 20px;
+      padding: 0 20px;
       box-sizing: border-box;
     }
 
     header {
       text-align: center;
-      margin-bottom: 20px;
+      margin-top: 0px;
+      margin-bottom: 0px;
     }
 
     header img {
-      max-width: 100px;
-      margin-bottom: 10px;
+      max-width: 120px;
+      margin-bottom: 15px;
     }
 
     h1 {
-      color: #FFF;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #FFA500; /* Naranja brillante */
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
       margin: 0;
     }
 
     main {
       background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      padding: 30px;
       width: 100%;
-      max-width: 400px;
+      max-width: 450px;
       box-sizing: border-box;
+      margin-bottom: 90px; /* Espacio adicional para el menú inferior */
+      animation: slideIn 0.6s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     h2 {
       color: #333;
       text-align: center;
+      font-size: 1.8rem;
+      font-weight: 600;
       margin-top: 0;
     }
 
@@ -57,38 +77,46 @@
 
     .container p {
       color: #666;
+      font-size: 1.1rem;
       margin: 10px 0;
     }
 
     .container span {
-      font-weight: bold;
+      font-weight: 600;
+      color: #3a4a69;
     }
 
     .button-container {
       display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
+      flex-direction: column;
+      gap: 15px;
     }
 
     button {
-      background-color: #FFA500; /* Botón de color naranja */
+      background-color: #FFA500; /* Naranja brillante */
       color: white;
-      padding: 12px;
+      padding: 15px;
       border: none;
-      border-radius: 4px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 16px;
-      width: calc(50% - 10px);
-      transition: background-color 0.3s ease;
+      font-size: 1.2rem;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     button:hover {
-      background-color: #FF8C00;
+      background-color: #FF8C00; /* Naranja más oscuro al hacer hover */
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
     }
 
     canvas {
       display: block;
-      margin: 0 auto;
+      margin: 30px auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
     @media (max-width: 600px) {
@@ -97,11 +125,20 @@
       }
 
       main {
-        padding: 15px;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.4rem;
       }
 
       button {
-        padding: 10px;
+        font-size: 1rem;
+        padding: 12px;
       }
     }
 
@@ -112,29 +149,45 @@
       align-items: center;
       width: 100%;
       background-color: #fff;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-      padding: 10px 0;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+      padding: 12px 0;
       position: fixed;
       bottom: 0;
       left: 0;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      animation: fadeInUp 0.3s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .bottom-menu a {
       color: #1E2A38;
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 500;
       text-align: center;
       flex-grow: 1;
+      font-size: 0.9rem;
+      padding: 8px;
+      transition: color 0.3s ease;
     }
 
     .bottom-menu a:hover {
-      color: #FFA500;
+      color: #FFA500; /* Naranja brillante en hover */
     }
 
     .bottom-menu a img {
-      max-width: 25px;
-      display: block;
-      margin: 0 auto 5px;
+      max-width: 28px;
+      margin-bottom: 5px;
     }
   </style>
 </head>
@@ -277,7 +330,6 @@
     }
   </script>
 
-  <!-- Cargar la biblioteca QRCode Generator -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.min.js"></script>
 </body>
 </html>
