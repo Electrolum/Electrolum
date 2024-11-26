@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electrolum - Productos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #010756; /* Fondo azul oscuro */
+            color: #ffa500; /* Color naranjita para texto */
+        }
+        h1 {
+            text-align: center;
+            color: #ffa500; /* Color naranjita */
+        }
+        .category h2 {
+            background-color: #FFA200;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .product {
+            max-width: 300px;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .product img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .product h3 {
+            margin-top: 10px;
+            color: #333;
+        }
+        .product p {
+            margin-top: 5px;
+            color: #666;
+        }
+        #downloadPdf {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            background-color: #FFA200;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+        #downloadPdf:hover {
+            background-color: #ff9500;
+        }
+    </style>
+</head>
+<body>
+    <img src="icons/Logo.png" alt="Electrolum Logo" class="logo" style="display: block; margin: 0 auto; max-width: 150px;">
+    <h1>Productos Electrolum</h1>
+
+    <!-- Botón de descarga de PDF reemplazando al buscador -->
+    <div style="text-align: center;">
+        <button id="downloadPdf" class="btn">Descargar Catálogo PDF</button>
+    </div>
+
+    <div class="category" id="lighting">
+        <h2>Iluminación</h2>
+        <div class="products" id="lighting-products">
+            <!-- Productos de iluminación se listan aquí -->
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-d65F0ARx2g5n67yGw2e9NYByxnyJ4gU",
+            authDomain: "electrolum-e1f74.firebaseapp.com",
+            projectId: "electrolum-e1f74",
+            storageBucket: "electrolum-e1f74.appspot.com",
+            messagingSenderId: "193218771258",
+            appId: "1:193218771258:web:1221cd686ceb5744f0f803",
+            measurementId: "G-XMK3GKB4RS"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const lightingProducts = document.getElementById('lighting-products');
+
+        function getProductsByCategory(category, container) {
+            db.collection("Productos").where("categoria", "==", category).get()
+            .then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc) {
+                    const product = doc.data();
+                    const productElement = `
+                        <div class="product">
+                            <img src="${product.imagen}" alt="${product.nombre}">
+                            <h3>${product.nombre}</h3>
+                            <p><strong>Código:</strong> ${product.codigo}</p>
+                        </div>
+                    `;
+                    container.innerHTML += productElement;
+                });
+            })
+            .catch(function(error) {
+                console.error("Error al obtener productos: ", error);
+            });
+        }
+
+        getProductsByCategory("lighting", lightingProducts);
+
+        document.getElementById('downloadPdf').addEventListener('click', async () => {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+
+            const logo = await fetchImageAsBase64("icons/Logo.png");
+
+            const drawHeader = () => {
+                pdf.setFillColor(1, 7, 86); // Azul oscuro
+                pdf.roundedRect(10, 10, 190, 20, 8, 8, 'F');
+                pdf.setFontSize(18);
+                pdf.setTextColor(255, 162, 0); // Naranja
+                pdf.text("Catálogo de Lámparas", pdf.internal.pageSize.width / 2, 20, { align: 'center' });
+
+                if (logo) {
+                    pdf.addImage(logo, 'PNG', 170, 10, 30, 30);
+                }
+            };
+
+            const drawFooter = (pageNumber) => {
+                pdf.setFillColor(1, 7, 86); // Azul oscuro
+                pdf.roundedRect(10, 280, 190, 20, 8, 8, 'F');
+                pdf.setFontSize(10);
+                pdf.setTextColor(255, 255, 255);
+                pdf.text(`Página ${pageNumber}`, 180, 290, { align: 'right' });
+                pdf.text("Electrolum - Todos los derechos reservados", 10, 290);
+            };
+
+            let yOffset = 40;
+            let pageNumber = 1;
+
+            drawHeader();
+
+            const products = document.querySelectorAll('.product');
+
+            for (let product of products) {
+                const img = product.querySelector('img').src;
+                const name = product.querySelector('h3').textContent;
+                const code = product.querySelector('p').textContent;
+
+                pdf.setFillColor(249, 249, 249);
+                pdf.roundedRect(10, yOffset, 190, 50, 8, 8, 'F');
+                pdf.setLineWidth(0.5);
+                pdf.setDrawColor(1, 7, 86); // Azul oscuro
+                pdf.line(10, yOffset + 50, 200, yOffset + 50);
+
+                const imgData = await fetchImageAsBase64(img);
+                if (imgData) pdf.addImage(imgData, 'JPEG', 15, yOffset + 10, 30, 30);
+
+                pdf.setFontSize(12);
+                pdf.setTextColor(0, 0, 0);
+                pdf.text(`Nombre: ${name}`, 50, yOffset + 20);
+                pdf.text(`Código: ${code}`, 50, yOffset + 30);
+
+                yOffset += 60;
+
+                if (yOffset > 260) {
+                    drawFooter(pageNumber++);
+                    pdf.addPage();
+                    drawHeader();
+                    yOffset = 40;
+                }
+            }
+
+            drawFooter(pageNumber);
+            pdf.save("catalogo_lamparas.pdf");
+        });
+
+        async function fetchImageAsBase64(url) {
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(blob);
+                });
+            } catch (error) {
+                console.error("Error al convertir la imagen:", error);
+                return null;
+            }
+        }
+    </script>
+</body>
+</html>
