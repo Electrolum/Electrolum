@@ -134,10 +134,10 @@
 
             const drawHeader = () => {
                 pdf.setFillColor(1, 7, 86); // Azul oscuro
-                pdf.roundedRect(10, 10, 190, 20, 8, 8, 'F');
-                pdf.setFontSize(18);
+                pdf.roundedRect(10, 10, 190, 30, 8, 8, 'F');
+                pdf.setFontSize(22);
                 pdf.setTextColor(255, 162, 0); // Naranja
-                pdf.text("Catálogo de Lámparas", pdf.internal.pageSize.width / 2, 20, { align: 'center' });
+                pdf.text("Catálogo de Lámparas", pdf.internal.pageSize.width / 2, 25, { align: 'center' });
 
                 if (logo) {
                     pdf.addImage(logo, 'PNG', 170, 10, 30, 30);
@@ -166,22 +166,22 @@
                 const code = product.querySelector('p').textContent;
 
                 pdf.setFillColor(249, 249, 249);
-                pdf.roundedRect(10, yOffset, 190, 50, 8, 8, 'F');
+                pdf.roundedRect(10, yOffset, 190, 70, 8, 8, 'F');
                 pdf.setLineWidth(0.5);
                 pdf.setDrawColor(1, 7, 86); // Azul oscuro
-                pdf.line(10, yOffset + 50, 200, yOffset + 50);
+                pdf.line(10, yOffset + 70, 200, yOffset + 70);
 
                 const imgData = await fetchImageAsBase64(img);
-                if (imgData) pdf.addImage(imgData, 'JPEG', 15, yOffset + 10, 30, 30);
+                if (imgData) pdf.addImage(imgData, 'JPEG', 15, yOffset + 10, 50, 50);
 
-                pdf.setFontSize(12);
+                pdf.setFontSize(14);
                 pdf.setTextColor(0, 0, 0);
-                pdf.text(`Nombre: ${name}`, 50, yOffset + 20);
-                pdf.text(`Código: ${code}`, 50, yOffset + 30);
+                pdf.text(`Nombre: ${name}`, 75, yOffset + 20);
+                pdf.text(`Código: ${code}`, 75, yOffset + 35);
 
-                yOffset += 60;
+                yOffset += 80;
 
-                if (yOffset > 260) {
+                if (yOffset > 250) {
                     drawFooter(pageNumber++);
                     pdf.addPage();
                     drawHeader();
