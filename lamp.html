@@ -7,72 +7,104 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             padding: 20px;
             background-color: #010756; /* Fondo azul oscuro */
             color: #ffa500; /* Color naranjita para texto */
         }
         h1 {
             text-align: center;
-            color: #ffa500; /* Color naranjita */
+            font-size: 36px;
+            color: #FFA200;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
         }
         .category h2 {
             background-color: #FFA200;
             color: white;
-            padding: 10px;
-            border-radius: 4px;
+            padding: 20px;
+            border-radius: 8px;
             text-align: center;
+            font-size: 24px;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
         }
         .products {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            justify-items: center;
         }
         .product {
+            background: linear-gradient(145deg, #f9f9f9, #e0e0e0);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            width: 100%;
             max-width: 300px;
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .product:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
         }
         .product img {
-            max-width: 100%;
-            border-radius: 8px;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 15px;
         }
         .product h3 {
-            margin-top: 10px;
+            font-size: 20px;
             color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
         }
         .product p {
-            margin-top: 5px;
             color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
         }
         #downloadPdf {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
-            padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            padding: 12px 25px;
+            border-radius: 10px;
             background-color: #FFA200;
             color: white;
             border: none;
             cursor: pointer;
             display: block;
-            margin: 20px auto;
+            margin: 40px auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
         }
         #downloadPdf:hover {
-            background-color: #ff9500;
+            background-color: #FF8C00;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+        .page-footer {
+            color: #FFF;
+            font-size: 12px;
+            margin-top: 30px;
+            text-align: center;
+            background-color: #010756;
+            padding: 20px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            border-top: 2px solid #FFA200;
         }
     </style>
 </head>
 <body>
     <img src="icons/Logo.png" alt="Electrolum Logo" class="logo" style="display: block; margin: 0 auto; max-width: 150px;">
-    <h1>Productos Electrolum</h1>
+    <h1>Catálogo de Productos Electrolum</h1>
 
-    <!-- Botón de descarga de PDF reemplazando al buscador -->
     <div style="text-align: center;">
-        <button id="downloadPdf" class="btn">Descargar Catálogo PDF</button>
+        <button id="downloadPdf">Descargar Catálogo PDF</button>
     </div>
 
     <div class="category" id="lighting">
